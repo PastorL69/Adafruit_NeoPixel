@@ -38,6 +38,7 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
 
 // Private, called from show()
 void  Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
+void(*pixels)
 {
   // verify we have a valid PIO and state machine
   if (! pio || (pio_sm < 0)) {
@@ -46,6 +47,6 @@ void  Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
 
   while(numBytes--)
     // Bits for transmission must be shifted to top 8 bits
-    //pio_sm_put_blocking(pio, pio_sm, ((uint32_t)*pixels++)<< 24);
+    // pio_sm_put_blocking(pio, pio_sm, ((uint32_t)*pixels++)<< 24);
 }
 #endif
