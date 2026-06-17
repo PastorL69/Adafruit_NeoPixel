@@ -30,7 +30,7 @@ bool Adafruit_NeoPixel::rp2040claimPIO(void) {
 
 bool Adafruit_NeoPixel::rp2040claimDMA(void) {
   // Have a look at if any DMA channels are available
-  dma_chan = claim_unused_channel(false);
+  dma_chan = dma_claim_unused_channel(false);
   if (dma_chan >= 0) {
     dma_cfg = dma_channel_get_default_config(dma_chan);
     channel_config_set_dreq(&dma_cfg, 
