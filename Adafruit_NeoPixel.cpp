@@ -455,7 +455,7 @@ void Adafruit_NeoPixel::show(void) {
 
   // NRF52 may use PWM + DMA (if available), may not need to disable interrupt
   // ESP32 may not disable interrupts because espShow() uses RMT which tries to acquire locks
-#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32))
+#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040))
   noInterrupts(); // Need 100% focus on instruction timing
 #endif
 
@@ -3332,7 +3332,7 @@ if(is800KHz) {
 
   // END ARCHITECTURE SELECT ------------------------------------------------
 
-#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32))
+#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040))
   interrupts();
 #endif
 
