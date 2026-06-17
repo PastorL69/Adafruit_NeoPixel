@@ -29,12 +29,30 @@ bool Adafruit_NeoPixel::rp2040claimPIO(void) {
 }
 
 bool Adafruit_NeoPixel::rp2040claimDMA(void) {
+  // Have a look at if any DMA channels are available
+  dma_chan = claim_unused_channel(false);
+  if (dma_chan >= 0) {
+    dma_cfg = dma_channel_get_default_config(dma_chan);
+    channel_config_set_dreq(&dma_cfg, 
+                            pio_get_dreq(pio, pio_sm, true));
+    channel_config_set_transfer_data_size(&dma_cfg, DMA_SIZE_8);
+    channel_config_set_read_increment(&dma_cfg, true);
+    channel_config_set_write_increment(&dma_cfg, false);
+    dma_channel_configure(dma_chan, &dma_cfg,
+                          &pio->txf[pio_sm],  // write addr
+                          nullptr, 0, false); // will set src/len on start
+    return true;
+  }
 
-  return true;
+  return false; // no DMA channel available :(
 }
 
 void Adafruit_NeoPixel::rp2040releaseDMA(void) {
+  if (dma_chan == -1) 
+    return;
 
+  dma_channel_unclaim(dma_chan);
+  dma_chan = -1;
 }
 
 void Adafruit_NeoPixel::rp2040releasePIO(void) {
@@ -53,8 +71,15 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
     return;
   }
 
-  while(numBytes--)
+  if(dma_chan >= 0) {
+    // set the read address and transfer immediately
+    dma_channel_set_read_addr(dma_chan, pixels, false);
+    dma_channel_set_trans_count(dma_chan, numBytes, true);
+    return;
+  }
+
+  //while(numBytes--)
     // Bits for transmission must be shifted to top 8 bits
-    pio_sm_put_blocking(pio, pio_sm, ((uint32_t)*pixels++)<< 24);
+    //pio_sm_put_blocking(pio, pio_sm, ((uint32_t)*pixels++)<< 24);
 }
 #endif

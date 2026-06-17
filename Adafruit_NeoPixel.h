@@ -389,7 +389,7 @@ private:
   uint   pio_sm = -1;
   uint   pio_program_offset = 0;
   uint   dma_chan = -1;
-  dma_channel_config dma_chan_config;
+  dma_channel_config dma_cfg;
 #endif
 
 protected:
