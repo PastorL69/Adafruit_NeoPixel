@@ -28,6 +28,15 @@ bool Adafruit_NeoPixel::rp2040claimPIO(void) {
   return true;
 }
 
+bool Adafruit_NeoPixel::rp2040claimDMA(void) {
+
+  return true;
+}
+
+void Adafruit_NeoPixel::rp2040releaseDMA(void) {
+
+}
+
 void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;

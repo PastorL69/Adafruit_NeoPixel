@@ -152,11 +152,14 @@ bool Adafruit_NeoPixel::begin(void) {
 
 #if defined(ARDUINO_ARCH_RP2040)
   // if we're calling begin() again, unclaim any existing PIO resc.
+  rp2040releaseDMA();
   rp2040releasePIO();
   if (! rp2040claimPIO()) {
     begun = false;
     return false;
   }
+  // if we're not able to claim a DMA chan we proceed with sm_put anyway
+  rp2040claimDMA();
   
 #endif
 
