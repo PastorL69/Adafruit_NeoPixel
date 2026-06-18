@@ -130,6 +130,7 @@ Adafruit_NeoPixel::~Adafruit_NeoPixel() {
 #if defined(ARDUINO_ARCH_RP2040)
   // Release any PIO
   rp2040releasePIO();
+  rp2040releaseDMA();
 #endif
 
   free(pixels);
@@ -152,11 +153,14 @@ bool Adafruit_NeoPixel::begin(void) {
 
 #if defined(ARDUINO_ARCH_RP2040)
   // if we're calling begin() again, unclaim any existing PIO resc.
+  rp2040releaseDMA();
   rp2040releasePIO();
   if (! rp2040claimPIO()) {
     begun = false;
     return false;
   }
+  // if we're not able to claim a DMA chan we proceed with sm_put anyway
+  rp2040claimDMA();
   
 #endif
 
@@ -455,7 +459,7 @@ void Adafruit_NeoPixel::show(void) {
 
   // NRF52 may use PWM + DMA (if available), may not need to disable interrupt
   // ESP32 may not disable interrupts because espShow() uses RMT which tries to acquire locks
-#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32))
+#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040))
   noInterrupts(); // Need 100% focus on instruction timing
 #endif
 
@@ -3332,7 +3336,7 @@ if(is800KHz) {
 
   // END ARCHITECTURE SELECT ------------------------------------------------
 
-#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32))
+#if !(defined(NRF52) || defined(NRF52_SERIES) || defined(ESP32) || defined(ARDUINO_ARCH_RP2040))
   interrupts();
 #endif
 
