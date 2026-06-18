@@ -130,6 +130,7 @@ Adafruit_NeoPixel::~Adafruit_NeoPixel() {
 #if defined(ARDUINO_ARCH_RP2040)
   // Release any PIO
   rp2040releasePIO();
+  rp2040releaseDMA();
 #endif
 
   free(pixels);
