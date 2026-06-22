@@ -79,7 +79,7 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
     // dma_channel_set_read_addr(dma_chan, pixels, false);
     // dma_channel_set_trans_count(dma_chan, numBytes, true);
     dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
-    dma_channel_wait_for_finish_blocking();
+    dma_channel_wait_for_finish_blocking(dma_chan);
     return;
   }
 
