@@ -73,12 +73,12 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
     return;
   }
 
-  // if(dma_chan >= 0) {
-  //   // set the read address and transfer immediately
-  //   dma_channel_set_read_addr(dma_chan, pixels, false);
-  //   dma_channel_set_trans_count(dma_chan, numBytes, true);
-  //   return;
-  // }
+  if(dma_chan >= 0) {
+    // set the read address and transfer immediately
+    dma_channel_set_read_addr(dma_chan, pixels, false);
+    dma_channel_set_trans_count(dma_chan, numBytes, true);
+    return;
+  }
 
   while(numBytes--)
     // Bits for transmission must be shifted to top 8 bits
