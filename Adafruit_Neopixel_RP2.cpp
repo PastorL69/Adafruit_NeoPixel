@@ -51,7 +51,6 @@ void Adafruit_NeoPixel::rp2040releaseDMA(void) {
   if (dma_chan == -1) 
     return;
 
-  dma_channel_wait_for_finish_blocking(dma_chan);
   dma_channel_unclaim(dma_chan);
   dma_chan = -1;
 }
@@ -61,9 +60,6 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
     return;
 
   while (!pio_sm_is_tx_fifo_empty(pio, pio_sm)) {
-    tight_loop_contents();
-  }
-  while (1) {
     tight_loop_contents();
   }
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
@@ -80,8 +76,10 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
 
   if(dma_chan >= 0) {
     // set the read address and transfer immediately
-    dma_channel_set_read_addr(dma_chan, pixels, false);
-    dma_channel_set_trans_count(dma_chan, numBytes, true);
+    // dma_channel_set_read_addr(dma_chan, pixels, false);
+    // dma_channel_set_trans_count(dma_chan, numBytes, true);
+    dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
+    dma_channel_wait_for_finish_blocking();
     return;
   }
 
