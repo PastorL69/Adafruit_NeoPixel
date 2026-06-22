@@ -35,7 +35,7 @@ bool Adafruit_NeoPixel::rp2040claimDMA(void) {
     dma_cfg = dma_channel_get_default_config(dma_chan);
     channel_config_set_dreq(&dma_cfg, 
                             pio_get_dreq(pio, pio_sm, true));
-    channel_config_set_transfer_data_size(&dma_cfg, DMA_SIZE_8);
+    channel_config_set_transfer_data_size(&dma_cfg, DMA_SIZE_32);
     channel_config_set_read_increment(&dma_cfg, true);
     channel_config_set_write_increment(&dma_cfg, false);
     dma_channel_configure(dma_chan, &dma_cfg,
