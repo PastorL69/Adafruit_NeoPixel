@@ -385,6 +385,7 @@ private:
   bool   rp2040claimDMA(void);
   void   rp2040releaseDMA(void);
   void   rp2040Show(uint8_t *pixels, uint32_t numBytes);
+  bool   skipNext = false; ///< we could destruct in the middle of a DMA transfer
   PIO    pio = NULL;
   uint   pio_sm = -1;
   uint   pio_program_offset = 0;
