@@ -35,7 +35,7 @@ bool Adafruit_NeoPixel::rp2040claimDMA(void) {
     dma_cfg = dma_channel_get_default_config(dma_chan);
     channel_config_set_dreq(&dma_cfg, 
                             pio_get_dreq(pio, pio_sm, true));
-    channel_config_set_transfer_data_size(&dma_cfg, DMA_SIZE_32);
+    channel_config_set_transfer_data_size(&dma_cfg, DMA_SIZE_8);
     channel_config_set_read_increment(&dma_cfg, true);
     channel_config_set_write_increment(&dma_cfg, false);
     dma_channel_configure(dma_chan, &dma_cfg,
@@ -51,9 +51,8 @@ void Adafruit_NeoPixel::rp2040releaseDMA(void) {
   if (dma_chan == -1) 
     return;
 
-  dma_channel_abort(dma_chan);
+  dma_channel_wait_for_finish_blocking(dma_chan);
   dma_channel_unclaim(dma_chan);
-  dma_channel_cleanup(dma_chan);
   dma_chan = -1;
 }
 
@@ -61,8 +60,9 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
-  pio_sm_drain_tx_fifo(pio, pio_sm);
-  pio_sm_clear_fifos(pio, pio_sm);
+  while (!pio_sm_is_rx_fifo_empty(pio, pio_sm)) {
+    tight_loop_contents();
+  }
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
