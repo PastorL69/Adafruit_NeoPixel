@@ -51,6 +51,7 @@ void Adafruit_NeoPixel::rp2040releaseDMA(void) {
   if (dma_chan == -1) 
     return;
 
+  dma_channel_abort(dma_chan);
   dma_channel_unclaim(dma_chan);
   dma_chan = -1;
 }
