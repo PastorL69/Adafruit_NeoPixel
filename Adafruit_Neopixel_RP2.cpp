@@ -2,6 +2,8 @@
 
 #include "Adafruit_NeoPixel.h"
 
+bool skipNext = false; ///< we could destruct in the middle of a DMA transfer
+
 bool Adafruit_NeoPixel::rp2040claimPIO(void) {
   // Find a PIO with enough available space in its instruction memory
   pio = NULL;
@@ -60,7 +62,6 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
     return;
 
   skipNext = true;
-  dma_channel_wait_for_finish_blocking(dma_chan);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
