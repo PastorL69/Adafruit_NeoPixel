@@ -59,7 +59,7 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
-  pio_sm_clear_fifos(pio, sm);
+  pio_sm_clear_fifos(pio, pio_sm);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
