@@ -153,9 +153,8 @@ bool Adafruit_NeoPixel::begin(void) {
 
 #if defined(ARDUINO_ARCH_RP2040)
   // if we're calling begin() again, unclaim any existing PIO resc.
-  rp2040releasePIO();
   rp2040releaseDMA();
-  //rp2040releasePIO();
+  rp2040releasePIO();
   if (! rp2040claimPIO()) {
     begun = false;
     return false;
