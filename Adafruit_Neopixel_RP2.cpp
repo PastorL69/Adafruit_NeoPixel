@@ -51,7 +51,6 @@ void Adafruit_NeoPixel::rp2040releaseDMA(void) {
   if (dma_chan == -1) 
     return;
 
-  skipNext = true;
   dma_channel_unclaim(dma_chan);
   dma_chan = -1;
 }
@@ -60,6 +59,8 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
+  skipNext = true;
+  dma_channel_wait_for_finish_blocking(dma_chan);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
