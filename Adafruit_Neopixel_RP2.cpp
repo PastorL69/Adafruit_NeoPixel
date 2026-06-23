@@ -61,6 +61,7 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
+  dma_channel_wait_for_finish_blocking(dma_chan);
   blockNextDma = true; // the destructor occured, give the next DMA transfer breathing room.
                        // if not done, garbage data will enter the strip.
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
