@@ -2,7 +2,7 @@
 
 #include "Adafruit_NeoPixel.h"
 
-bool waitNext = false; // blocking flag for a DMA transfer
+bool blockNextDma = false; // blocking flag for a DMA transfer
 
 bool Adafruit_NeoPixel::rp2040claimPIO(void) {
   // Find a PIO with enough available space in its instruction memory
@@ -61,7 +61,7 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
-  waitNext = true;
+  blockNextDma = true;
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
@@ -76,9 +76,9 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
 
   if(dma_chan >= 0) {
     dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
-    if (waitNext) {
+    if (blockNextDma) {
       // do not interrupt the current transfer.
-      waitNext = false;
+      blockNextDma = false;
       dma_channel_wait_for_finish_blocking(dma_chan);
     } 
     return;
