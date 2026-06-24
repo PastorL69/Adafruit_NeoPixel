@@ -63,7 +63,7 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   // If not done, garbage data could enter the next launch.
   //dma_channel_wait_for_finish_blocking(dma_chan);
   dma_channel_abort(dma_chan);
-  while (!pio_sm_is_tx_fifo_empty(spi_pio, spi_sm)) {
+  while (!pio_sm_is_tx_fifo_empty(pio, pio_sm)) {
     pio_sm_clear_fifos(pio, pio_sm);
   }
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
