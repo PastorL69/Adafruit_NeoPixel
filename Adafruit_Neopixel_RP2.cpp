@@ -60,14 +60,13 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
     return;
 
   // the destructor occured, abort the DMA channel if one is in use.
-  // If not done, it will panick and crash!
+  // If not done, and we are in the middle of a transfer, it will panick and crash!
   if (dma_chan >= 0) {
     dma_channel_abort(dma_chan);
   }
   pio_sm_clear_fifos(pio, pio_sm);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
-
 
 // Private, called from show()
 void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
