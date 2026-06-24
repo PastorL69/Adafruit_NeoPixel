@@ -2,8 +2,6 @@
 
 #include "Adafruit_NeoPixel.h"
 
-bool blockNextDma = false; // blocking flag for a DMA transfer
-
 bool Adafruit_NeoPixel::rp2040claimPIO(void) {
   // Find a PIO with enough available space in its instruction memory
   pio = NULL;
@@ -61,8 +59,10 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
-  blockNextDma = true; // the destructor occured, give the next DMA transfer breathing room.
-                       // if not done, garbage data will enter the strip.
+  // the destructor occured, let the current DMA transfer finish.
+  // If not done, garbage data could enter the next launch.
+  dma_channel_wait_for_finish_blocking(dma_chan);
+  pio_sm_clear_fifos(pio, pio_sm);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
 
@@ -77,11 +77,6 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
 
   if(dma_chan >= 0) {
     dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
-    if (blockNextDma) {
-      // do not interrupt the current transfer.
-      blockNextDma = false;
-      dma_channel_wait_for_finish_blocking(dma_chan);
-    } 
     return;
   }
 
