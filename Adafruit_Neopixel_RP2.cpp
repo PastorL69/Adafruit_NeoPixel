@@ -59,9 +59,11 @@ void Adafruit_NeoPixel::rp2040releasePIO(void) {
   if (pio == NULL) 
     return;
 
-  // the destructor occured, let the current DMA transfer finish.
-  // If not done, garbage data could enter the next launch.
-  dma_channel_wait_for_finish_blocking(dma_chan);
+  // the destructor occured, abort the DMA channel if one is in use.
+  // If not done, it will panick and crash!
+  if (dma_chan >= 0) {
+    dma_channel_abort(dma_chan);
+  }
   pio_sm_clear_fifos(pio, pio_sm);
   pio_remove_program_and_unclaim_sm(&ws2812_program, pio, pio_sm,  pio_program_offset);
 }
