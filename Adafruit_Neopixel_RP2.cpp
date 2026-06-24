@@ -76,10 +76,10 @@ void Adafruit_NeoPixel::rp2040Show(uint8_t *pixels, uint32_t numBytes)
     return;
   }
 
-  if(dma_chan >= 0) {
-    dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
-    return;
-  }
+  // if(dma_chan >= 0) {
+  //   dma_channel_transfer_from_buffer_now(dma_chan, pixels, numBytes);
+  //   return;
+  // }
 
   while(numBytes--)
     // Bits for transmission must be shifted to top 8 bits
